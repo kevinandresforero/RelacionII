@@ -1,16 +1,18 @@
 import pymysql.cursors
 
-contraseña = "261120"
-Db = "Prueba"
+contraseña = "enlacasa"
+Db = "Prueba1"
 
 conexion = pymysql.connect(host="localhost",
                            user="root",
-                           passwd="261120",
-                           database="Prueba")
+                           passwd=contraseña,
+                           database=Db)
+
+op = 0
 cursor = conexion.cursor()
 
 while op != 9:
-    print("1. Crear Base de datos")
+    print("\n1. Crear Base de datos")
     print("2. Crear Tabla Students")
     print("3. Crear Tabla Materias")
     print("4. Crear Tabla Relaciones")
@@ -18,100 +20,103 @@ while op != 9:
     print("6. Llenar tabla Materias")
     print("7. Llenar Relaciones")
     print("8. Mostrar Tablas")
-    print("9. Borrar Tabla")
+    print("9. Borrar Tabla\n")
     op = int(input("Digite opcion: "))
 
-    if op == 1:         # Crear Db
-        conexion = pymysql.connect(
-            host="localhost",
-            user="root",
-            passwd=contraseña,
-        )
-        cursor = conexion.cursor()
+    if op == 1:         # Crear base de datos
+        print("\nConectado") 
         cursor.execute("SHOW DATABASES;")
-        print("Conectado Ome")
         try:
-            print("Creando...")
             cursor.execute("CREATE DATABASE Prueba;")
-            print("Se creo satisfactoriamente la DB Prueba")
+            print("\nCreando...")
+            print("\nSe creo satisfactoriamente la DB Prueba")
+            cursor.close()
+            conexion.close()
         except:
-            print("Ya Fue Creada En Otra Ocación la DB Prueba")
-        cursor.close()
+            print("\nYa Fue Creada En Otra Ocación la DB Prueba")
 
     if op == 2:         #Crear tabla Estudiantes
-        conexion = pymysql.connect(
-            host="localhost",
-            user="root",
-            passwd=contraseña,
-        )
-        cursor = conexion.cursor()
-
         try:
-            print("Creando tablas Students...")
             Students = """CREATE TABLE Students(
                             IdE int NOT NULL,
                             NomE varchar(15) NOT NULL,
                             PRIMARY KEY(IdE)
             ) ;
             """
-
-            print(" Tabla Studiants  craeada satisfactoriamente")
+            cursor.execute(Students)
+            print("\nCreando tabla Students...")
+            print("\nTabla Students  creada satisfactoriamente")
+            cursor.close()
+            conexion.close()
         except:
-            print("Tabla Studiants ya existe")
-        cursor.close()
-        conexion.close()
+            print("\nTabla Students ya existe")
 
     if op == 3:         #Crear tabla Materias
-        conexion = pymysql.connect(
-            host="localhost",
-            user="root",
-            passwd=contraseña,
-        )
-        cursor = conexion.cursor()
-
         try:
-            print("Creando tabla Materias...")
-
             Materias = """CREATE TABLE Materias(
                         idM int NOT NULL,
                         NomM varchar(15) NOT NULL,
                         PRIMARY KEY(idM)
             ) ;
             """
-            print(" Tabla Materias  craeada satisfactoriamente")
+            cursor.execute(Materias)
+            print("\nCreando tabla Materias...")
+            print("\nTabla Materias  creada satisfactoriamente")
+            cursor.close()
+            conexion.close()
         except:
-            print("Tabla Materias ya existe")
-        cursor.close()
-        conexion.close()
+            print("\nTabla Materias ya existe")
 
-    if op == 4:
-        conexion = pymysql.connect(
-            host="localhost",
-            user="root",
-            passwd=contraseña,
-        )
-        cursor = conexion.cursor()
-
+    if op == 4: #Crear tabla relaciones
         try:
-
-            InsertarRegistro = """insert into Students(IdE, NomE) values
-                                    (%s,%s)"""
-            cursor.execute(InsertarRegistro, (Codigo, Nombre))
-
             Relaciones = """CREATE TABLE Relaciones(
                             idE_foran int NOT NULL,
                             idM_foran int NOT NULL,
                             FOREIGN KEY (idE_foran) REFERENCES Students(IdE),
                             FOREIGN KEY (idM_foran) REFERENCES Materias(idM)
                             );"""
-            cursor.execute(Students)
-            cursor.execute(Materias)
-            conexion.commit()
-            print("Creando tabla Relaciones ")
-        except:
-            print("Ya está creada las tabla Relaciones")
+            cursor.execute(Relaciones)
+            print("\nCreando tabla Relaciones...")
+            print("\nTabla Relaciones creada satisfactoriamente")
+            cursor.close()
+            conexion.close()
 
-    Codigo = int(input("Digite codigo del estudiante: "))
-    Nombre = input("Digite nombre del estudiante: ")
-    TablaAlumnos = """"insert into Students() values
-            (%s,%s,%s,%s,%s,%s)"""
+        except:
+            print("\nYa está creada la tabla Relaciones")
+
+    if op == 5: #Llenar tabla Students
+        try:
+            IdE = int(input("Digite codigo del estudiante: "))
+            NomE = input("Digite nombre del estudiante: ")
+            TablaAlumnos = """INSERT INTO Students(IdE, NomE) VALUES(%s, %s)"""
+            cursor.execute(TablaAlumnos, (IdE, NomE))
+            print("\nRegistro agregado")
+            cursor.close()
+            conexion.commit()
+        except:
+            print("\nError al agregar registro")
+
+    if op == 6: #Llenar tabla Materias
+
+    #try:
+        IdM = int(input("Digite codigo de la materia: "))
+        NomM = input("Digite nombre de la materia: ")
+        TablaMaterias = """INSERT INTO Materias(IdM, NomM) VALUES(%s, %s)"""
+        cursor.execute(TablaMaterias, (IdM, NomM))
+        print("\nRegistro agregado")
+        cursor.close()
+        conexion.commit()
+    #except:
+        print("\nError al agregar registro")
+    
+    if op == 7: #Llenar tabla Relaciones
+    #try:
+        TablaRelaciones = """INSERT INTO Relaciones(IdM, IdE)"""
+        cursor.execute(TablaRelaciones, (IdM, IdE))
+        print("\nRegistro agregado")
+        cursor.close()
+        conexion.commit()
+
+        
+    #except:
+        print("\nError al procesar registro")
