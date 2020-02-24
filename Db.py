@@ -30,6 +30,7 @@ while op != 9:
             cursor.execute("CREATE DATABASE Prueba;")
             print("\nCreando...")
             print("\nSe creo satisfactoriamente la DB Prueba")
+            conexion.commit()
             cursor.close()
             conexion.close()
         except:
@@ -46,6 +47,7 @@ while op != 9:
             cursor.execute(Students)
             print("\nCreando tabla Students...")
             print("\nTabla Students  creada satisfactoriamente")
+            conexion.commit()
             cursor.close()
             conexion.close()
         except:
@@ -62,6 +64,7 @@ while op != 9:
             cursor.execute(Materias)
             print("\nCreando tabla Materias...")
             print("\nTabla Materias  creada satisfactoriamente")
+            conexion.commit()
             cursor.close()
             conexion.close()
         except:
@@ -78,6 +81,7 @@ while op != 9:
             cursor.execute(Relaciones)
             print("\nCreando tabla Relaciones...")
             print("\nTabla Relaciones creada satisfactoriamente")
+            conexion.commit()
             cursor.close()
             conexion.close()
 
@@ -91,8 +95,8 @@ while op != 9:
             TablaAlumnos = """INSERT INTO Students(IdE, NomE) VALUES(%s, %s)"""
             cursor.execute(TablaAlumnos, (IdE, NomE))
             print("\nRegistro agregado")
-            cursor.close()
             conexion.commit()
+            conexion.close()
         except:
             print("\nError al agregar registro")
 
@@ -104,19 +108,59 @@ while op != 9:
         TablaMaterias = """INSERT INTO Materias(IdM, NomM) VALUES(%s, %s)"""
         cursor.execute(TablaMaterias, (IdM, NomM))
         print("\nRegistro agregado")
-        cursor.close()
         conexion.commit()
+        cursor.close()
     #except:
         print("\nError al agregar registro")
     
     if op == 7: #Llenar tabla Relaciones
-    #try:
-        TablaRelaciones = """INSERT INTO Relaciones(IdM, IdE)"""
-        cursor.execute(TablaRelaciones, (IdM, IdE))
-        print("\nRegistro agregado")
-        cursor.close()
-        conexion.commit()
+        try:
+            idM_foran = int(input("Digite codigo de la materia: "))
+            idE_foran = int(input("Digite codigo del estudiantes: "))
+            TablaRelaciones = """INSERT INTO Relaciones(idM_foran, idE_foran) VALUES (%s, %s)"""
+            cursor.execute(TablaRelaciones, (idM_foran, idE_foran))
+            print("\nRegistro agregado")
+            conexion.commit()
+            cursor.close()           
+        except:
+            print("\nError al procesar registro")
 
-        
-    #except:
-        print("\nError al procesar registro")
+    if op == 8:     #Mostrar tablas
+        try:
+            MostrarTablaEs = "select * from  Students"
+            cursor=conexion.cursor()
+            cursor.execute(MostrarTablaEs)
+            record = cursor.fetchall()
+            for fila in record:
+                print("{:<4} {:<4}".format(fila[0], fila[1]))
+            print("\n")
+            
+        except:
+            print("\n Error al mostrar tabla Estudiantes")
+
+        try:
+            MostrarTablaMa = "select * from  Materias"
+            cursor=conexion.cursor()
+            cursor.execute(MostrarTablaMa)
+            record = cursor.fetchall()
+            for fila in record:
+                print("{:<4} {:<4}".format(fila[0], fila[1]))
+            print("\n")    
+            #cursor.close()
+            #conexion.close()            
+        except:
+            print("\n Error al mostrar Materias")
+
+        try:
+            MostrarTablaRe = "select IdE, IdM, NomE, NomM from Students\
+                inner join Relaciones on Relaciones.idE_foran = Students.IdE\
+                inner join Materias on Relaciones.idM_foran = Materias.idM"
+            cursor = conexion.cursor()
+            cursor.execute(MostrarTablaRe)
+            record = cursor.fetchall()
+            for fila in record:
+                print("{:<4} {:<4}".format(fila[0], fila[1]))
+
+            
+        except:
+            print("\n Error al mostrar Relaciones")
